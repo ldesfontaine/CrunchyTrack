@@ -1,0 +1,15 @@
+{
+  "name": "CrunchyTrack",
+  "description": "Une extension simple pour suivre votre historique de visionnage sur Crunchyroll.",
+  "version": "1.0.0",
+  "author": "Dmoulinie & ldesfontaine",
+  "manifest_version": 3,
+
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": ["webNavigation"]
+}
