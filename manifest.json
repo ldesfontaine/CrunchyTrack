@@ -11,5 +11,5 @@
   "action": {
     "default_popup": "popup/popup.html"
   },
-  "permissions": ["webNavigation"]
+  "permissions": ["webNavigation","tabs"]
 }
