@@ -4,12 +4,10 @@ body {
     padding: 0;
 }
 
-#not-crunchy{
-    display: flex;
-    flex-direction: column;
+#not-crunchy, #crunchy {
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 50vh;
     background-color: #f2f2f2;
 }
 

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         var currentTab = tabs[0];
         if (currentTab.url.includes('crunchyroll.com')) {
-            alert('This extension work on Crunchyroll.com');
+            showCrunchy();
         } else {
             showRedirectButton();
         }
@@ -18,4 +18,14 @@ function showRedirectButton() {
     redirectButton.addEventListener('click', function() {
         chrome.tabs.create({ url: 'https://www.crunchyroll.com/' });
     });
+}
+
+function showCrunchy() {
+    var crunchyList = document.getElementById('crunchy');
+    crunchyList.style.display = 'block';
+}
+
+
+function logApiCrunchy() {
+
 }
