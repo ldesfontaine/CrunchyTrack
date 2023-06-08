@@ -8,8 +8,17 @@
   "background": {
     "service_worker": "background.js"
   },
-  "action": {
-    "default_popup": "popup/popup.html"
+  "action": { 
+    "default_title": "Click Me",
+    "default_popup": "popup.html"
   },
-  "permissions": ["webNavigation","tabs"]
+  "icons": {
+    "16": "icons/CrunchyTrack-16.png",
+    "32": "icons/CrunchyTrack-32.png",
+    "48": "icons/CrunchyTrack-48.png",
+    "128": "icons/CrunchyTrack-128.png"
+  },
+  "permissions": ["webNavigation","tabs", "scripting", "activeTab"],
+  "host_permissions": ["<all_urls>"]
+
 }
