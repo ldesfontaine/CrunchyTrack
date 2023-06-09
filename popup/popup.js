@@ -2,9 +2,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         var currentTab = tabs[0];
-
+        console.log(document.title);
+        console.log(tabs);
+        console.log(currentTab);
+        console.log(currentTab.url);
         if (currentTab.url.includes('crunchyroll.com')) {
             showCrunchy();
+            showRefreshButton();
         } else {
             showRedirectButton();
         }
@@ -13,18 +17,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function injectTheScript() {
-    // Query the active tab, which will be only one tab and inject the script in it.
-    chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-        chrome.scripting.executeScript({target: {tabId: tabs[0].id}, files: ['../background.js']})
-    })
+// Buttons
+
+function showCrunchy() {
+    var crunchyList = document.getElementById('crunchy');
+    crunchyList.style.display = 'block';
 }
-document.getElementById('animeTitle').addEventListener('click', injectTheScript)
 
-
-
-
-
+function showRefreshButton() {
+    var getAnimeTitleButton = document.getElementById('refresh');
+    getAnimeTitleButton.addEventListener('click', function() {
+        getAnimeInfos();
+    });
+}
 
 function showRedirectButton() {
     var redirectButton = document.getElementById('crunchyroll-button');
@@ -33,41 +38,66 @@ function showRedirectButton() {
     });
 }
 
-function printTitle() {
-    const title = document.title;
-    console.log(title);
+// Extensions modify informations # Only on extension popup.html
+
+function modifyAnimeTitle(name) {
+    document.getElementById("anime-name").innerText = name;
+}
+
+function modifyEpisodeTitle(title) {
+    document.getElementById("anime-episode-title").innerText = title;
+}
+
+function modifyEpisodeNumber(number) {
+    document.getElementById("anime-episode-number").innerText = number;
+}
+
+// --- End of Extensions informations (popup.html) ---"
+
+// Scripts
+
+function getAnimeInfos() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        console.log("Execute Script");
+        chrome.scripting.executeScript({
+          target: { tabId: tabs[0].id },
+          func: getAllInfos
+        }, (result) => {
+            let results = result[0].result;
+            modifyAnimeTitle(results.AnimeTitle);
+            modifyEpisodeTitle(results.episodeTitle);
+            modifyEpisodeNumber(results.EpisodeNumber);
+            //document.getElementById("name").innerText = result[0].result;
+        });
+      });
 };
 
 
-function showAnimeTitle() {
-    // var animeTitle = document.getElementsByClassName('show-title-link');
-    var animeTitle = document.querySelector('.show-title-link');
-    var animeTitle2 = document.querySelector('h4');
-
-    console.log(animeTitle);
-    console.log(animeTitle2);
-    if (animeTitle != null || animeTitle != undefined) 
-    {
-        document.getElementById('name').innerHTML = document.title;
-        return;
-    }
-    document.getElementById('name').innerHTML = "Undefined";
-
-    
-    chrome.scripting.executeScript({
-        target: { tabId: currentTab.id },
-        func: printTitle,
-        //        files: ['contentScript.js'],  // To call external file instead
-    }).then(() => console.log('Injected a function!'));
-    
-}
-
-function showCrunchy() {
-    var crunchyList = document.getElementById('crunchy');
-    crunchyList.style.display = 'block';
-}
 
 
-function logApiCrunchy() {
 
+// Page interaction
+
+
+function getAllInfos() {
+    // Anime Link
+    animeLink = document.getElementsByClassName('show-title-link');
+
+    // Anime Title
+    animeTitle = animeLink[0].firstChild.innerHTML;
+
+    // Anime Episode Title "Episode Number - Episode Title"
+    episodeTitleFull = document.getElementsByClassName('title')[0].innerHTML;
+
+    // Anime Episode Title "Episode Title"
+    episodeTitle = episodeTitleFull.split("-")[1]; // Split par "-" et récupérer le deuxième élément
+
+    // Anime Episode Number "Episode Number"
+    episodeNumber = episodeTitleFull.split("-")[0]; // Split par "-" et récupérer le premier élément
+    AllInfos = {
+        "AnimeTitle" : animeTitle,
+        "episodeTitle" : episodeTitle,
+        "EpisodeNumber" : episodeNumber
+    };
+    return AllInfos;
 }
