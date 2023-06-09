@@ -22,6 +22,86 @@ h1 {
     font-size: 16px;
 } */
 
+/** Informations des épisodes **/
+
+#episode-info {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    background-color: #ededed;
+}
+#anime-name {
+    display: flex;
+    font-size: 20px;
+    color: #f47521;
+    justify-content: center;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+}
+
+.anime-title-date-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 15px;
+}
+
+
+#anime-episode-number {
+    /* margin: 5px 0; */
+}
+
+.anime-title-date {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#anime-episode-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+}
+
+#episode-thumbnail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#anime-episode-date {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#anime-episode-link {
+    margin-top: 5px;
+}
+
+#anime-episode-date:nth-child(0) {
+    padding-right: 5px;
+}
+
+#episode-link-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.episode-thumbnail {
+    border: 3px solid black;
+    border-radius: 5px;
+    min-width: 25vw;
+    min-height: 12vh;
+    max-width: 33vw;
+    max-height: 15vh;
+}
+
+/** FIN informations des épisodes **/
+
+
 
 #banner {
     width: 100vw;
@@ -56,4 +136,47 @@ h1 {
     margin: 0 auto;
     width: 80vw;
     height: 50vw;
+}
+
+
+.button-link {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    background-color: #e28f13;
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    text-align: center;
+    text-decoration: none;
+    /* display: inline-block; */
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.button-link:hover {
+    background-color: #ffc30f;
+    color: #fff;
+}
+
+.button-link>:nth-child(1) {
+    margin-left:5px;
+}
+
+#anime-episode-title-link-container {
+    margin: 0 15px;
+}
+
+.button-link>:nth-child(2) {
+    margin-top:-2px;
+    text-indent: 5px;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s linear 0s;
+}
+
+.button-link:hover>:nth-child(2) {
+    transform: translate(5px, 0px);
+    transition: 0.2s linear 0s;
 }
