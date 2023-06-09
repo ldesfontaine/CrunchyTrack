@@ -2,8 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    width: 250px;
-    height: 300px;
+    width: 350px;
+    height: 500px;
 }
 
 #not-crunchy, #crunchy {
@@ -29,7 +29,7 @@ h1 {
     padding: 0;
 }
 
-#crunchyroll-button {
+.button-main {
     width: 100vw;
     height: 10vh;
     background-color: #fe9800;
@@ -37,14 +37,23 @@ h1 {
     border: none;
     font-family:Georgia, 'Times New Roman', Times, serif;
     margin-top: -3px;
+    font-size: 6vw;
 }
 
-#crunchyroll-button:hover {
+.button-main:hover {
     background-color: #f5b800;
     color: #fff;
 }
 
-#crunchyroll-button:active {
+.button-main:active {
     opacity: 0.9;
     background-color: #ff8800;
+    transform: scale(0.98);
+}
+
+.anime-picture {
+    display: flex;
+    margin: 0 auto;
+    width: 80vw;
+    height: 50vw;
 }

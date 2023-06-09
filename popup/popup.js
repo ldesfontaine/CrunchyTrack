@@ -1,37 +1,89 @@
+class Episode {
+    constructor(nom, lien, lienImage, number, episodeName) {
+        this.nom = nom;
+        this.lien = lien;
+        this.lienImage = lienImage;
+        this.number = number;
+        this.episodeName = episodeName;
+    }
+
+    getNom() {
+        return this.nom;
+    }
+
+    getLien() {
+        return this.lien;
+    }
+
+    getLienImage() {
+        return this.lienImage;
+    }
+
+    getEpisode() {
+        return this.number;
+    }
+
+    getEpisodeName() {
+        return this.episodeName;
+    }
+
+    setNom(nom) {
+        this.nom = nom;
+    }
+
+    setLien(lien) {
+        this.lien = lien;
+    }
+
+    setLienImage(lienImage) {
+        this.lienImage = lienImage;
+    }
+
+    setEpisode(number) {
+        this.number = number;
+    }
+}
+
+
+
 // Main function
+const allEpisodes = [];
 document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        var currentTab = tabs[0];
-        console.log(document.title);
-        console.log(tabs);
-        console.log(currentTab);
-        console.log(currentTab.url);
-        if (currentTab.url.includes('crunchyroll.com')) {
-            showCrunchy();
-            showRefreshButton();
+        if (tabs[0].url.includes("crunchyroll.com")) {
+            handle_addEpisode();
         } else {
-            showRedirectButton();
+            handle_redirectButton();
         }
+        
     });
-
 });
+
+
 
 
 // Buttons
 
-function showCrunchy() {
-    var crunchyList = document.getElementById('crunchy');
-    crunchyList.style.display = 'block';
+function showButton_byID(id) {
+    document.getElementById(id).style.display = "block";
 }
 
-function showRefreshButton() {
-    var getAnimeTitleButton = document.getElementById('refresh');
+function hideButton_byID(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+function handle_addEpisode() {
+    hideButton_byID('crunchyroll-button');
+    showButton_byID('addEpisode');
+    var getAnimeTitleButton = document.getElementById('addEpisode');
     getAnimeTitleButton.addEventListener('click', function() {
         getAnimeInfos();
     });
 }
 
-function showRedirectButton() {
+function handle_redirectButton() {
+    showButton_byID('crunchyroll-button');
+    hideButton_byID('addEpisode');
     var redirectButton = document.getElementById('crunchyroll-button');
     redirectButton.addEventListener('click', function() {
         chrome.tabs.create({ url: 'https://www.crunchyroll.com/' });
@@ -58,21 +110,24 @@ function modifyEpisodeNumber(number) {
 
 function getAnimeInfos() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        console.log("Execute Script");
         chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
           func: getAllInfos
         }, (result) => {
             let results = result[0].result;
-            modifyAnimeTitle(results.AnimeTitle);
-            modifyEpisodeTitle(results.episodeTitle);
-            modifyEpisodeNumber(results.EpisodeNumber);
+            let episode = new Episode(results.AnimeTitle, tabs[0].url, "", results.EpisodeNumber, results.EpisodeName);
+            modifyAnimeTitle(episode.getNom());
+            modifyEpisodeTitle(episode.getEpisodeName());
+            modifyEpisodeNumber(episode.getEpisode());
+            allEpisodes.push(episode);
             //document.getElementById("name").innerText = result[0].result;
         });
       });
 };
 
+function savetoCloud() {
 
+}
 
 
 
@@ -81,23 +136,24 @@ function getAnimeInfos() {
 
 function getAllInfos() {
     // Anime Link
-    animeLink = document.getElementsByClassName('show-title-link');
+    episodeLink = document.getElementsByClassName('show-title-link');
 
     // Anime Title
-    animeTitle = animeLink[0].firstChild.innerHTML;
+    animeTitle = episodeLink[0].firstChild.innerHTML;
 
     // Anime Episode Title "Episode Number - Episode Title"
     episodeTitleFull = document.getElementsByClassName('title')[0].innerHTML;
 
     // Anime Episode Title "Episode Title"
-    episodeTitle = episodeTitleFull.split("-")[1]; // Split par "-" et récupérer le deuxième élément
+    episodeName = episodeTitleFull.split("-")[1]; // Split par "-" et récupérer le deuxième élément
 
     // Anime Episode Number "Episode Number"
     episodeNumber = episodeTitleFull.split("-")[0]; // Split par "-" et récupérer le premier élément
     AllInfos = {
         "AnimeTitle" : animeTitle,
-        "episodeTitle" : episodeTitle,
-        "EpisodeNumber" : episodeNumber
+        "EpisodeName" : episodeName,
+        "EpisodeNumber" : episodeNumber,
+        "EpisodeLink" : episodeLink
     };
     return AllInfos;
 }
