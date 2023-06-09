@@ -25,7 +25,8 @@ h1 {
 /** Informations des épisodes **/
 
 #episode-info {
-    display: flex;
+    display: none;
+    /*display: flex;*/
     flex-direction: column;
     height: fit-content;
     background-color: #ededed;
