@@ -17,7 +17,8 @@
     "32": "icons/CrunchyTrack-32.png",
     "48": "icons/CrunchyTrack-48.png",
     "128": "icons/CrunchyTrack-128.png"
-  }
-
+  },
+  "permissions": ["activeTab", "scripting","webNavigation"],
+  "host_permissions": ["<all_urls>"],
 
 }
