@@ -79,6 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // Buttons
+function hideEpInfos() {
+    document.getElementById("episode-info").style.display = "block";
+}
 
 function showButton_byID(id) {
     document.getElementById(id).style.display = "block";
@@ -140,6 +143,7 @@ function modifyLienImage(lienImage) {
 // Scripts
 
 function getAnimeInfos() {
+    hideEpInfos();
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
