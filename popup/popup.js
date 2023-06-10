@@ -113,9 +113,15 @@ function handle_redirectButton() {
 function handle_openEpisode() {
     var episodeLinkButton = document.getElementById('anime-episode-link');
     episodeLinkButton.addEventListener('click', function() {
-        chrome.tabs.create({ url: episodeLinkButton.href });
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            chrome.tabs.update(tabs[0].id, { url: episodeLinkButton.href });
+        });
     });
 }
+
+// function goToURL(url) {
+//     window.location.href = url;
+// }
 
 // Extensions modify informations # Only on extension popup.html
 
@@ -211,7 +217,9 @@ function getAllInfos() {
     episodeNameFull = nextEpisode[0].firstChild.getElementsByTagName('div')[0].firstChild.title;
 
     // Anime Episode Title "Episode Title"
-    episodeName = episodeNameFull.split("-")[1]; // Split par "-" et récupérer le deuxième élément
+    // remove only first "-" from string
+
+    episodeName = episodeNameFull.split(" - ")[1]; // Split par "-" et récupérer le deuxième élément
 
     // Anime Episode Number "Episode Number"
     episodeNumber = episodeNameFull.split("-")[0]; // Split par "-" et récupérer le premier élément
