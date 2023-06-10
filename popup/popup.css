@@ -17,6 +17,18 @@ h1 {
     margin-bottom: 20px;
 }
 
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    width: 100%;
+    background-color: #f47521;
+    position: absolute;
+    user-select: none;
+    bottom: 0;
+}
+
 /* button {
     padding: 10px 20px;
     font-size: 16px;

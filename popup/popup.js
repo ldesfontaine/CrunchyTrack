@@ -72,7 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             handle_redirectButton();
         }
-        
+        copyright();
+
     });
 });
 
@@ -287,4 +288,9 @@ function storeData(data) {
     localStorage.setItem("cache", JSON.stringify(cache));
 
     console.log("Données enregistrées avec succès");
+}
+
+function copyright(){
+    let year = new Date().getFullYear();
+    document.getElementById("year").innerText = year;
 }
