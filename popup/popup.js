@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         if (tabs[0].url.includes("crunchyroll.com")) {
             handle_addEpisode();
+            handle_openEpisode();
         } else {
             handle_redirectButton();
         }
@@ -106,6 +107,13 @@ function handle_redirectButton() {
     var redirectButton = document.getElementById('crunchyroll-button');
     redirectButton.addEventListener('click', function() {
         chrome.tabs.create({ url: 'https://www.crunchyroll.com/' });
+    });
+}
+
+function handle_openEpisode() {
+    var episodeLinkButton = document.getElementById('anime-episode-link');
+    episodeLinkButton.addEventListener('click', function() {
+        chrome.tabs.create({ url: episodeLinkButton.href });
     });
 }
 
@@ -155,7 +163,7 @@ function getAnimeInfos() {
             // const DAY = new Date().getDay(); // Get the current day
 
             let episode = new Episode(  nom             = results.AnimeTitle,
-                                        lien            = tabs[0].url,
+                                        lien            = results.EpisodeLink,
                                         lienImage       = results.LienImage,
                                         number          = results.EpisodeNumber,
                                         episodeName     = results.EpisodeName,
@@ -181,21 +189,26 @@ function getAnimeInfos() {
 
 
 function getAllInfos() {
+    // Next episode DIV
+    let nextEpisode = document.getElementsByClassName('prev-next-episodes');
+    let currentEpisode = document.getElementsByClassName('show-title-link');
+
+    console.log(nextEpisode);
+    console.log(currentEpisode);
     // Anime Link
-    episodeLink = document.getElementsByClassName('show-title-link');
+    let nextEpisodeLink = nextEpisode[0].firstChild.firstChild.href
 
     // Anime Title
-    animeTitle = episodeLink[0].firstChild.innerHTML;
+    animeTitle = currentEpisode[0].firstChild.innerHTML;
 
     // Anime Thumbnail
-    lienImage = document.getElementsByClassName('erc-prev-next-episode episode');
-    lienImage = lienImage[0].getElementsByTagName('div')
+    lienImage = nextEpisode[0].getElementsByTagName('div')
     lienImage = lienImage[1]
     lienImage = lienImage.getElementsByTagName('img')
     lienImage = lienImage[0].src
     
     // Anime Episode Title "Episode Number - Episode Title"
-    episodeNameFull = document.getElementsByClassName('title')[0].innerHTML;
+    episodeNameFull = nextEpisode[0].firstChild.getElementsByTagName('div')[0].firstChild.title;
 
     // Anime Episode Title "Episode Title"
     episodeName = episodeNameFull.split("-")[1]; // Split par "-" et récupérer le deuxième élément
@@ -210,7 +223,7 @@ function getAllInfos() {
         "EpisodeName" : episodeName,
         "EpisodeFullName" : episodeNameFull,
         "EpisodeNumber" : episodeNumber,
-        "EpisodeLink" : episodeLink
+        "EpisodeLink" : nextEpisodeLink
     };
     return AllInfos;
 }
