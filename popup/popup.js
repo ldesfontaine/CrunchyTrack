@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
             handle_redirectButton();
         }
         copyright();
-
     });
 });
 
@@ -82,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Buttons
 function hideEpInfos() {
-    document.getElementById("episode-info").style.display = "block";
+        document.getElementById("episode-info").style.display = "block";
 }
 
 function showButton_byID(id) {
@@ -164,7 +163,11 @@ function copyright(){
 // Scripts
 
 function getAnimeInfos() {
-    hideEpInfos();
+    isWatching(function(result) {
+        if (result) {
+            hideEpInfos();
+        }
+    });
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
@@ -294,4 +297,16 @@ function storeData(data) {
     localStorage.setItem("cache", JSON.stringify(cache));
 
     console.log("Données enregistrées avec succès");
+}
+
+function isWatching(callback) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        if (tabs[0].url.includes("crunchyroll.com") && tabs[0].url.includes("watch")) {
+            console.log("En train de regarder");
+            callback(true);
+        } else {
+            console.log("Pas en train de regarder");
+            callback(false);
+        }
+    });
 }
