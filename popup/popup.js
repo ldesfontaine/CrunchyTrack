@@ -163,6 +163,7 @@ function getAnimeInfos() {
           target: { tabId: tabs[0].id },
           func: getAllInfos
         }, (result) => {
+            storeData(result[0].result);
             let results = result[0].result;
             // const YEAR = new Date().getFullYear(); // Get the current year
             // const MONTH = new Date().getMonth(); // Get the current month
@@ -234,4 +235,56 @@ function getAllInfos() {
         "EpisodeLink" : nextEpisodeLink
     };
     return AllInfos;
+}
+
+function storeData(data) {
+    // console.log(data);
+    var animeTitle = data.AnimeTitle;
+    var episodeFullName = data.EpisodeFullName;
+    var episodeLink = data.EpisodeLink;
+    var episodeName = data.EpisodeName;
+    var episodeNumber = data.EpisodeNumber;
+    var lienImage = data.LienImage;
+    // console.log(animeTitle, episodeFullName, episodeLink, episodeName, episodeNumber, lienImage);
+    var username = "PABLO"
+    // Construire l'objet cache avec les données
+
+    // Construire l'objet cache avec les données
+    var cacheObject = {
+        [username]: {
+            [animeTitle]: {
+                [episodeFullName]: {
+                    "EpisodeLink": episodeLink,
+                    "EpisodeNumber": parseInt(episodeNumber),
+                    "LastUpdate": new Date().toLocaleString()
+                }
+            }
+        }
+    };
+
+    // Récupérer le cache existant depuis le localStorage
+    var cache = JSON.parse(localStorage.getItem("cache")) || {};
+
+    var userData = cache[username] || {};
+    var animeData = userData[animeTitle] || {};
+
+    // Vérifier si l'épisode existe déjà pour cet anime
+    if (episodeFullName in animeData) {
+        console.log("L'épisode existe déjà pour cet anime.");
+        return;
+    }
+
+    animeData[episodeFullName] = {
+        "EpisodeLink": episodeLink,
+        "EpisodeNumber": parseInt(episodeNumber),
+        "LastUpdate": new Date().toLocaleString()
+    };
+
+    userData[animeTitle] = animeData;
+    cache[username] = userData;
+
+    // Enregistrer le cache dans le localStorage
+    localStorage.setItem("cache", JSON.stringify(cache));
+
+    console.log("Données enregistrées avec succès");
 }
