@@ -153,6 +153,12 @@ function modifyLienImage(lienImage) {
     document.getElementById("anime-thumbnail").src = lienImage;
 }
 
+function copyright(){
+    let year = new Date().getFullYear();
+    document.getElementById("year").innerText = year;
+}
+
+
 // --- End of Extensions informations (popup.html) ---"
 
 // Scripts
@@ -189,7 +195,7 @@ function getAnimeInfos() {
             //document.getElementById("name").innerText = result[0].result;
         });
       });
-};
+}
 
 
 
@@ -288,9 +294,4 @@ function storeData(data) {
     localStorage.setItem("cache", JSON.stringify(cache));
 
     console.log("Données enregistrées avec succès");
-}
-
-function copyright(){
-    let year = new Date().getFullYear();
-    document.getElementById("year").innerText = year;
 }
