@@ -144,6 +144,14 @@ footer {
     transform: scale(0.98);
 }
 
+.button-disabled:disabled   {
+    /* c'est pour ovveride le bouton */
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
 .anime-picture {
     display: flex;
     margin: 0 auto;

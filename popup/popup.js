@@ -69,15 +69,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (tabs[0].url.includes("crunchyroll.com")) {
             handle_addEpisode();
             handle_openEpisode();
+            desactiverBoutonAjouter();
         } else {
             handle_redirectButton();
         }
         copyright();
     });
+    isWatching(function(result) {
+        if (result) {
+            activerBoutonAjouter();
+        }
+    });
 });
-
-
-
 
 // Buttons
 function hideEpInfos() {
@@ -157,6 +160,16 @@ function copyright(){
     document.getElementById("year").innerText = year;
 }
 
+function desactiverBoutonAjouter() {
+    var bouton = document.getElementById("addEpisode");
+    bouton.disabled = true;
+    bouton.classList.add("button-disabled");
+}
+
+function activerBoutonAjouter() {
+    var bouton = document.getElementById("addEpisode");
+    bouton.disabled = false;
+}
 
 // --- End of Extensions informations (popup.html) ---"
 
@@ -200,7 +213,15 @@ function getAnimeInfos() {
       });
 }
 
-
+function isWatching(callback) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        if (tabs[0].url.includes("crunchyroll.com") && tabs[0].url.includes("watch")) {
+            callback(true);
+        } else {
+            callback(false);
+        }
+    });
+}
 
 // Page interaction
 
@@ -297,16 +318,4 @@ function storeData(data) {
     localStorage.setItem("cache", JSON.stringify(cache));
 
     console.log("Données enregistrées avec succès");
-}
-
-function isWatching(callback) {
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        if (tabs[0].url.includes("crunchyroll.com") && tabs[0].url.includes("watch")) {
-            console.log("En train de regarder");
-            callback(true);
-        } else {
-            console.log("Pas en train de regarder");
-            callback(false);
-        }
-    });
 }
