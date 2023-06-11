@@ -314,3 +314,45 @@ function storeData(data) {
 
     console.log("Données enregistrées avec succès");
 }
+
+
+function getLocalStorage(){
+    try {
+        var cache = JSON.parse(localStorage.getItem("cache"));
+        console.log(cache);
+        if (cache) {
+            return cache;
+        } else {
+            return null;
+        }
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+// buton d'id addTest pour tester la fonction
+var buton = document.getElementById("addTest");
+buton.addEventListener("click", function() {
+    getOnlineStorage('LILA');
+});
+
+
+function getOnlineStorage(username) {
+    fetch(`http://127.0.0.1:5000/get/${username}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+
+            // Mettre en cache les données récupérées
+            var cache = JSON.parse(localStorage.getItem("cache")) || {};
+            cache[username] = data; // Remplace les données précédentes pour l'utilisateur spécifié
+            localStorage.setItem("cache", JSON.stringify(cache));
+        })
+        .catch(error => console.log(error));
+}
