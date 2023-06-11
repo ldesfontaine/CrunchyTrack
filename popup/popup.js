@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Buttons
 function hideEpInfos() {
-        document.getElementById("episode-info").style.display = "block";
+    document.getElementById("episode-info").style.display = "block";
 }
 
 function showButton_byID(id) {
@@ -183,8 +183,8 @@ function getAnimeInfos() {
     });
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          func: getAllInfos
+            target: { tabId: tabs[0].id },
+            func: getAllInfos
         }, (result) => {
             storeData(result[0].result);
             let results = result[0].result;
@@ -193,13 +193,13 @@ function getAnimeInfos() {
             // const DAY = new Date().getDay(); // Get the current day
 
             let episode = new Episode(  nom             = results.AnimeTitle,
-                                        lien            = results.EpisodeLink,
-                                        lienImage       = results.LienImage,
-                                        number          = results.EpisodeNumber,
-                                        episodeName     = results.EpisodeName,
-                                        episodeFullName = results.EpisodeFullName,
-                                        // dateAjout       =  DAY + "/" + MONTH + "/" + YEAR
-                                        );
+                lien            = results.EpisodeLink,
+                lienImage       = results.LienImage,
+                number          = results.EpisodeNumber,
+                episodeName     = results.EpisodeName,
+                episodeFullName = results.EpisodeFullName,
+                // dateAjout       =  DAY + "/" + MONTH + "/" + YEAR
+            );
 
             modifyAnimeTitle(episode.getNom()); // Name of the anime
             modifyLienImage(episode.getLienImage()); // Thumbnail of the episode
@@ -210,7 +210,7 @@ function getAnimeInfos() {
             allEpisodes.push(episode);
             //document.getElementById("name").innerText = result[0].result;
         });
-      });
+    });
 }
 
 function isWatching(callback) {
@@ -244,7 +244,7 @@ function getAllInfos() {
     lienImage = lienImage[1]
     lienImage = lienImage.getElementsByTagName('img')
     lienImage = lienImage[0].src
-    
+
     // Anime Episode Title "Episode Number - Episode Title"
     episodeNameFull = nextEpisode[0].firstChild.getElementsByTagName('div')[0].firstChild.title;
 
@@ -269,28 +269,27 @@ function getAllInfos() {
 }
 
 function storeData(data) {
-    // console.log(data);
     var animeTitle = data.AnimeTitle;
     var episodeFullName = data.EpisodeFullName;
     var episodeLink = data.EpisodeLink;
     var episodeName = data.EpisodeName;
     var episodeNumber = data.EpisodeNumber;
     var lienImage = data.LienImage;
-    // console.log(animeTitle, episodeFullName, episodeLink, episodeName, episodeNumber, lienImage);
-    var username = "PABLO"
-    // Construire l'objet cache avec les données
+    var username = "PABLO";
 
     // Construire l'objet cache avec les données
     var cacheObject = {
-        [username]: {
-            [animeTitle]: {
-                [episodeFullName]: {
-                    "EpisodeLink": episodeLink,
-                    "EpisodeNumber": parseInt(episodeNumber),
-                    "LastUpdate": new Date().toLocaleString()
+        username: username,
+        data: [
+            {
+                Anime: {
+                    Title: animeTitle,
+                    EpisodeName: episodeName,
+                    EpisodeNumber: episodeNumber,
+                    EpisodeLink: episodeLink
                 }
             }
-        }
+        ]
     };
 
     // Récupérer le cache existant depuis le localStorage
@@ -305,11 +304,7 @@ function storeData(data) {
         return;
     }
 
-    animeData[episodeFullName] = {
-        "EpisodeLink": episodeLink,
-        "EpisodeNumber": parseInt(episodeNumber),
-        "LastUpdate": new Date().toLocaleString()
-    };
+    animeData[episodeFullName] = cacheObject;
 
     userData[animeTitle] = animeData;
     cache[username] = userData;
