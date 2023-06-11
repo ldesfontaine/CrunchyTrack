@@ -267,6 +267,21 @@ function getAllInfos() {
     };
     return AllInfos;
 }
+const username = "Lucas";
+
+
+function getLocalStorage() {
+    try {
+        var cache = JSON.parse(localStorage.getItem("cache"));
+        console.log(cache);
+        return cache || null;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+
 
 function storeData(data) {
     var animeTitle = data.AnimeTitle;
@@ -275,7 +290,6 @@ function storeData(data) {
     var episodeName = data.EpisodeName;
     var episodeNumber = data.EpisodeNumber;
     var lienImage = data.LienImage;
-    var username = "PABLO";
 
     // Construire l'objet cache avec les données
     var cacheObject = {
@@ -291,7 +305,6 @@ function storeData(data) {
             }
         ]
     };
-
     // Récupérer le cache existant depuis le localStorage
     var cache = JSON.parse(localStorage.getItem("cache")) || {};
 
@@ -304,7 +317,11 @@ function storeData(data) {
         return;
     }
 
-    animeData[episodeFullName] = cacheObject;
+    animeData[episodeFullName] = {
+        "EpisodeLink": episodeLink,
+        "EpisodeNumber": parseInt(episodeNumber),
+        "LastUpdate": new Date().toLocaleString()
+    };
 
     userData[animeTitle] = animeData;
     cache[username] = userData;
@@ -314,3 +331,92 @@ function storeData(data) {
 
     console.log("Données enregistrées avec succès");
 }
+
+function getOnlineStorage(username) {
+    fetch(`http://127.0.0.1:5000/get/${username}`)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Erreur lors de la récupération des données depuis le serveur");
+            }
+        })
+        .then(data => {
+            console.log(data);
+            storeUserDataLocal(username, data);
+        })
+        .catch(error => console.log(error));
+}
+
+function storeUserDataLocal(username, data) {
+    var cache = JSON.parse(localStorage.getItem("cache")) || {};
+    cache[username] = data;
+    localStorage.setItem("cache", JSON.stringify(cache));
+}
+
+
+function convertDataForServer(data) {
+    var convertedData = {
+        username: Object.keys(data)[0],
+        data: []
+    };
+
+    for (var username in data) {
+        if (username !== 'lastSync') {
+            var userData = data[username];
+            for (var animeTitle in userData) {
+                var animeData = userData[animeTitle];
+                for (var episodeName in animeData) {
+                    var episodeData = animeData[episodeName];
+                    var convertedEpisode = {
+                        Anime: {
+                            Title: animeTitle,
+                            EpisodeName: episodeName,
+                            EpisodeNumber: episodeData.EpisodeNumber,
+                            EpisodeLink: episodeData.EpisodeLink
+                        }
+                    };
+                    convertedData.data.push(convertedEpisode);
+                }
+            }
+        }
+    }
+
+    return convertedData;
+}
+
+
+function synchronize(username) {
+    // Récupérer les données stockées localement
+    var cache = JSON.parse(localStorage.getItem("cache")) || {};
+
+    // Convertir les données pour les mettre au bon format
+    var convertedData = convertDataForServer(cache);
+
+    // Envoyer les données vers le serveur
+    fetch('http://127.0.0.1:5000/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(convertedData)
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Synchronisation réussie");
+            } else {
+                console.log("Erreur lors de la synchronisation");
+            }
+        })
+        .catch(error => console.log(error));
+}
+
+
+
+
+// Bouton d'ID "addTest" pour tester la fonction
+var button = document.getElementById("addTest");
+button.addEventListener("click", function() {
+    // synchronize('Pablo');
+    getOnlineStorage('Lucas');
+});
