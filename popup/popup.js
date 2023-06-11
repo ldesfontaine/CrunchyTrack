@@ -338,21 +338,28 @@ buton.addEventListener("click", function() {
 });
 
 
-function getOnlineStorage(username) {
-    fetch(`http://127.0.0.1:5000/get/${username}`, {
+function fetchUserData(username) {
+    return fetch(`http://127.0.0.1:5000/get/${username}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         }
     })
         .then(response => response.json())
+        .catch(error => console.log(error));
+}
+
+function storeUserData(username, data) {
+    var cache = JSON.parse(localStorage.getItem("cache")) || {};
+    cache[username] = data;
+    localStorage.setItem("cache", JSON.stringify(cache));
+}
+
+function getOnlineStorage(username) {
+    fetchUserData(username)
         .then(data => {
             console.log(data);
-
-            // Mettre en cache les données récupérées
-            var cache = JSON.parse(localStorage.getItem("cache")) || {};
-            cache[username] = data; // Remplace les données précédentes pour l'utilisateur spécifié
-            localStorage.setItem("cache", JSON.stringify(cache));
+            storeUserData(username, data);
         })
         .catch(error => console.log(error));
 }
