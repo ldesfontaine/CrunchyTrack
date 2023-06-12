@@ -186,7 +186,7 @@ function getAnimeInfos() {
             target: { tabId: tabs[0].id },
             func: getAllInfos
         }, (result) => {
-            storeData(result[0].result);
+            setLocalStorage(result[0].result);
             let results = result[0].result;
             // const YEAR = new Date().getFullYear(); // Get the current year
             // const MONTH = new Date().getMonth(); // Get the current month
@@ -283,7 +283,7 @@ function getLocalStorage() {
 
 
 
-function storeData(data) {
+function setLocalStorage(data) {
     var animeTitle = data.AnimeTitle;
     var episodeFullName = data.EpisodeFullName;
     var episodeLink = data.EpisodeLink;
@@ -415,8 +415,8 @@ function synchronize(username) {
 
 
 // Bouton d'ID "addTest" pour tester la fonction
-var button = document.getElementById("addTest");
-button.addEventListener("click", function() {
-    // synchronize('Pablo');
-    getOnlineStorage('Lucas');
-});
+// var button = document.getElementById("addTest");
+// button.addEventListener("click", function() {
+//     // synchronize('Pablo');
+//     getOnlineStorage('Lucas');
+// });
