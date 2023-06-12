@@ -140,8 +140,13 @@ function modifyEpisodeNumber(number) {
     document.getElementById("anime-episode-number").innerText = number;
 }
 
-function modifyEpisodeLink(link) {
+function modifyEpisodeLink(link, number) {
     let episodeLinkButton = document.getElementById("anime-episode-link")
+    if (number >= 10) {
+        episodeLinkButton.classList.add("button-link-smaller");
+    } else {
+        episodeLinkButton.classList.remove("button-link-smaller");
+    }
     episodeLinkButton.href = link;
     episodeLinkButton.disabled = false;
 }
@@ -205,7 +210,7 @@ function getAnimeInfos() {
             modifyLienImage(episode.getLienImage()); // Thumbnail of the episode
             modifyEpisodeTitle(episode.getEpisodeName()); // Name of the episode
             modifyEpisodeNumber(episode.getEpisode()); // Number of the episode
-            modifyEpisodeLink(episode.getLien()); // Link of the episode
+            modifyEpisodeLink(episode.getLien(), episode.getEpisode()); // Link of the episode
             // modifyDateAjout(episode.getDateAjout()); // Date d'ajout de l'épisode
             allEpisodes.push(episode);
             //document.getElementById("name").innerText = result[0].result;
