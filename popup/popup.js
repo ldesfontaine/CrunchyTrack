@@ -77,6 +77,18 @@ document.addEventListener('DOMContentLoaded', function () {
     isWatching(function (result) {
         if (result) {
             activerBoutonAjouter();
+            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    func: checkIfNextEpisodeAvailableScript
+                }, (result) => {
+                    if (result[0].result) {
+                        activerBoutonAjouter();
+                    } else {
+                        desactiverBoutonAjouter();
+                    }
+                });
+            });   
         }
     });
 });
@@ -121,6 +133,8 @@ function handle_openEpisode() {
     });
 }
 
+
+
 // function goToURL(url) {
 //     window.location.href = url;
 // }
@@ -139,8 +153,13 @@ function modifyEpisodeNumber(number) {
     document.getElementById("anime-episode-number").innerText = number;
 }
 
-function modifyEpisodeLink(link) {
+function modifyEpisodeLink(link, number) {
     let episodeLinkButton = document.getElementById("anime-episode-link")
+    if (number >= 10) {
+        episodeLinkButton.classList.add("button-link-smaller");
+    } else {
+        episodeLinkButton.classList.remove("button-link-smaller");
+    }
     episodeLinkButton.href = link;
     episodeLinkButton.disabled = false;
 }
@@ -185,7 +204,7 @@ function getAnimeInfos() {
             target: {tabId: tabs[0].id},
             func: getAllInfos
         }, (result) => {
-            storeData(result[0].result);
+            setLocalStorage(result[0].result);
             let results = result[0].result;
             // const YEAR = new Date().getFullYear(); // Get the current year
             // const MONTH = new Date().getMonth(); // Get the current month
@@ -204,7 +223,7 @@ function getAnimeInfos() {
             modifyLienImage(episode.getLienImage()); // Thumbnail of the episode
             modifyEpisodeTitle(episode.getEpisodeName()); // Name of the episode
             modifyEpisodeNumber(episode.getEpisode()); // Number of the episode
-            modifyEpisodeLink(episode.getLien()); // Link of the episode
+            modifyEpisodeLink(episode.getLien(), episode.getEpisode()); // Link of the episode
             // modifyDateAjout(episode.getDateAjout()); // Date d'ajout de l'épisode
             allEpisodes.push(episode);
             //document.getElementById("name").innerText = result[0].result;
@@ -224,14 +243,22 @@ function isWatching(callback) {
 
 // Page interaction
 
+function checkIfNextEpisodeAvailableScript() {
+    let nextEpisode = document.getElementsByClassName('prev-next-episodes');
+    if (nextEpisode[0].childElementCount >= 2) {
+        return true;
+    }
+    return false;
+}
+
 
 function getAllInfos() {
     // Next episode DIV
     let nextEpisode = document.getElementsByClassName('prev-next-episodes');
     let currentEpisode = document.getElementsByClassName('show-title-link');
-
-    console.log(nextEpisode);
-    console.log(currentEpisode);
+    
+    // console.log(nextEpisode);
+    // console.log(currentEpisode);
     // Anime Link
     let nextEpisodeLink = nextEpisode[0].firstChild.firstChild.href
 
@@ -278,7 +305,7 @@ function getLocalStorage() {
     }
 }
 
-function storeData(data) {
+function setLocalStorage(data) {
     var animeTitle = data.AnimeTitle;
     var episodeFullName = data.EpisodeFullName;
     var episodeLink = data.EpisodeLink;
@@ -397,8 +424,9 @@ function synchronize(username) {
 
 
 // Bouton d'ID "addTest" pour tester la fonction
-var button = document.getElementById("addTest");
-button.addEventListener("click", function () {
-    // synchronize('Pablo');
-    getOnlineStorage('Lucas');
-});
+// var button = document.getElementById("addTest");
+// button.addEventListener("click", function() {
+//     // synchronize('Pablo');
+//     getOnlineStorage('Lucas');
+// });
+

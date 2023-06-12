@@ -112,6 +112,8 @@ footer {
     max-height: 15vh;
 }
 
+
+
 /** FIN informations des épisodes **/
 
 
@@ -174,6 +176,10 @@ footer {
     font-size: 12px;
     margin: 4px 2px;
     cursor: pointer;
+}
+
+.button-link-smaller {
+    padding: 10px 14px!important;
 }
 
 .button-link:hover {
