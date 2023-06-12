@@ -78,6 +78,18 @@ document.addEventListener('DOMContentLoaded', function() {
     isWatching(function(result) {
         if (result) {
             activerBoutonAjouter();
+            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    func: checkIfNextEpisodeAvailableScript
+                }, (result) => {
+                    if (result[0].result) {
+                        activerBoutonAjouter();
+                    } else {
+                        desactiverBoutonAjouter();
+                    }
+                });
+            });   
         }
     });
 });
@@ -121,6 +133,8 @@ function handle_openEpisode() {
         });
     });
 }
+
+
 
 // function goToURL(url) {
 //     window.location.href = url;
@@ -230,14 +244,22 @@ function isWatching(callback) {
 
 // Page interaction
 
+function checkIfNextEpisodeAvailableScript() {
+    let nextEpisode = document.getElementsByClassName('prev-next-episodes');
+    if (nextEpisode[0].childElementCount >= 2) {
+        return true;
+    }
+    return false;
+}
+
 
 function getAllInfos() {
     // Next episode DIV
     let nextEpisode = document.getElementsByClassName('prev-next-episodes');
     let currentEpisode = document.getElementsByClassName('show-title-link');
-
-    console.log(nextEpisode);
-    console.log(currentEpisode);
+    
+    // console.log(nextEpisode);
+    // console.log(currentEpisode);
     // Anime Link
     let nextEpisodeLink = nextEpisode[0].firstChild.firstChild.href
 
