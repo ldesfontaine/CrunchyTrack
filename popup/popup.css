@@ -182,6 +182,11 @@ footer {
     padding: 10px 14px!important;
 }
 
+.button-link-smaller-smaller {
+    padding: 10px 11px!important;
+}
+
+
 .button-link:hover {
     background-color: #ffc30f;
     color: #fff;
