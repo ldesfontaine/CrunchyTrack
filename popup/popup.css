@@ -38,7 +38,7 @@ footer {
 
 #episodes {
     overflow-y: auto;
-    max-height: 331px;
+    max-height: 327px;
     background-color: lightgrey;
     width: 100vw;
 }
@@ -63,8 +63,8 @@ footer {
 .anime-title-date-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    margin: 0 15px;
+    justify-content: space-evenly;
+    margin: 0 0 0 15px;
 }
 
 
@@ -78,14 +78,19 @@ footer {
     justify-content: space-around;
 }
 
-#anime-episode-title {
+.anime-episode-title {
     display: flex;
     flex-direction: row;
     justify-content: center;
     text-align: center;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; /* start showing ellipsis when 3rd line is reached */
+    white-space: pre-wrap; /* let the text wrap preserving spaces */
 }
 
-#episode-thumbnail-container {
+.episode-thumbnail-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -172,17 +177,16 @@ footer {
 .button-link {
     display: flex;
     justify-content: center;
-    margin: 0 auto;
     background-color: #e28f13;
     border: none;
     color: white;
     padding: 10px 16px;
     text-align: center;
     text-decoration: none;
-    /* display: inline-block; */
     font-size: 12px;
     margin: 4px 2px;
     cursor: pointer;
+    width: 150px;
 }
 
 .button-link-smaller {
@@ -203,7 +207,7 @@ footer {
     margin-left:5px;
 }
 
-#anime-episode-title-link-container {
+.anime-episode-title-link-container {
     margin: 0 15px;
 }
 
