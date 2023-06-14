@@ -36,6 +36,13 @@ footer {
 
 /** Informations des épisodes **/
 
+#episodes {
+    overflow-y: auto;
+    max-height: 331px;
+    background-color: lightgrey;
+    width: 100vw;
+}
+
 #episode-info {
     display: none;
     /*display: flex;*/
@@ -43,7 +50,7 @@ footer {
     height: fit-content;
     background-color: #ededed;
 }
-#anime-name {
+.anime-name {
     display: flex;
     font-size: 20px;
     color: #f47521;
@@ -208,7 +215,26 @@ footer {
     transition: 0.2s linear 0s;
 }
 
-.button-link:hover>:nth-child(2) {
+.button-link:hover>:nth-child(1) {
     transform: translate(5px, 0px);
     transition: 0.2s linear 0s;
 }
+
+
+/* SCROLLBAR  */
+
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background-color: #ef8300;
+    border-radius: 20px;
+    border: 6px solid transparent;
+    background-clip: content-box;
+  }

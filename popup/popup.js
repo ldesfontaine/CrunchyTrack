@@ -1,73 +1,11 @@
-class Episode {
-    constructor(nom, lien, lienImage, number, episodeName, episodeFullName, dateAjout) {
-        this.nom = nom;
-        this.lien = lien;
-        this.lienImage = lienImage;
-        this.number = number;
-        this.episodeName = episodeName;
-        this.episodeFullName = episodeFullName;
-        // this.dateAjout = dateAjout;
-    }
-
-    getNom() {
-        return this.nom;
-    }
-
-    getLien() {
-        return this.lien;
-    }
-
-    getLienImage() {
-        return this.lienImage;
-    }
-
-    getEpisode() {
-        return this.number;
-    }
-
-    getEpisodeName() {
-        return this.episodeName;
-    }
-
-    getEpisodeFullName() {
-        return this.episodeFullName;
-    }
-
-    // getDateAjout() {
-    //     return this.dateAjout;
-    // }
-
-    // SETTERS
-
-    setNom(nom) {
-        this.nom = nom;
-    }
-
-    setLien(lien) {
-        this.lien = lien;
-    }
-
-    setLienImage(lienImage) {
-        this.lienImage = lienImage;
-    }
-
-    setEpisode(number) {
-        this.number = number;
-    }
-
-    setDateAjout(dateAjout) {
-        this.dateAjout = dateAjout;
-    }
-}
 
 const username = "Pano";
+var episodeCount = 0;
 // Main function
-const allEpisodes = [];
 document.addEventListener('DOMContentLoaded', function () {
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
         if (tabs[0].url.includes("crunchyroll.com")) {
             handle_addEpisode();
-            handle_openEpisode();
             handle_getFromLocalStorage();
             desactiverBoutonAjouter();
         } else {
@@ -96,9 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Buttons
-function hideEpInfos() {
-    document.getElementById("episode-info").style.display = "block";
-}
+
 
 function showButton_byID(id) {
     document.getElementById(id).style.display = "block";
@@ -139,52 +75,112 @@ function handle_openEpisode() {
 function handle_getFromLocalStorage() {
     var cache = JSON.parse(localStorage.getItem("cache")) || {};
 
-// Iterate through the cache object
-for (var username in cache) {
-  var userData = cache[username];
-  
-  // Iterate through the anime data for each user
-  for (var animeTitle in userData) {
-    var animeData = userData[animeTitle];
+    // Iterate through the cache object
+    for (var username in cache) {
+    var userData = cache[username];
     
-    // Iterate through the episodes for each anime
-    for (var episodeFullName in animeData) {
-      var episode = animeData[episodeFullName];
-      
-      episodeData = {
-        "AnimeTitle": episode.AnimeTitle,
-        "EpisodeName": episode.EpisodeName,
-        "EpisodeThumbnail": episode.EpisodeThumbnail,
-        "EpisodeLink": episode.EpisodeLink,
-        "EpisodeNumber": parseInt(episode.EpisodeNumber),
-        "LastUpdate": episode.LastUpdate
-      }
-      createEpisode(episodeData);
+    // Iterate through the anime data for each user
+    for (var animeTitle in userData) {
+        var animeData = userData[animeTitle];
+        
+        // Iterate through the episodes for each anime
+        for (var episodeFullName in animeData) {
+        var episode = animeData[episodeFullName];
+        
+        var episodeData = {
+            "AnimeTitle": episode.AnimeTitle,
+            "EpisodeName": episode.EpisodeName,
+            "EpisodeThumbnail": episode.EpisodeThumbnail,
+            "EpisodeLink": episode.EpisodeLink,
+            "EpisodeNumber": parseInt(episode.EpisodeNumber),
+            "LastUpdate": episode.LastUpdate
+        }
+        createEpisode(episodeData);
+        }
     }
-  }
+    }
 }
 
 function createEpisode(data) {
-    console.log(data);
-}
 
 
-}
+    let episodesDIV = document.getElementById("episodes");
+    let episode_section = document.createElement("section");
+    episode_section.id = episodeCount;
+    episodesDIV.appendChild(episode_section);
 
-function handle_getFromLocalStorage2() {
-    var getFromLocalStorageButton = document.getElementById('getFromStorage');
-    getFromLocalStorageButton.addEventListener('click', function () {
-        let data = localStorage.getItem("cache");
-        let dataJSON = JSON.parse(data);
-        // console.log(dataJSON);
-        let AllAnimes = dataJSON["Pano"];
-        console.log(AllAnimes);
-        for (let anime in AllAnimes) {
-            console.log(anime);
-        }
-        // console.log(AllAnimes);
+
+    // Anime Title
+    let anime_title = document.createElement("p"); // HTML element
+    anime_title.classList.add("anime-name"); // Add class to the element   
+    anime_title.innerText = data.AnimeTitle; // Text inside the element
+
+    let episode = document.getElementById(episodeCount); 
+    episode.appendChild(anime_title);
+    
+    // Container
+    let container = document.createElement("div")
+    container.classList.add("anime-title-date-container");
+    episode.appendChild(container);
+    
+    var containerElement = episode.getElementsByClassName("anime-title-date-container")[0];
+
+    // Thumbnail Container + thumbnail
+    var thumbnail_container = document.createElement("div")
+    thumbnail_container.classList.add("episode-thumbnail-container");
+    var thumbnail = document.createElement("img")
+    thumbnail.classList.add("episode-thumbnail");
+    thumbnail.src = data.EpisodeThumbnail;
+    containerElement.appendChild(thumbnail_container);
+    thumbnail_container.appendChild(thumbnail);
+    
+
+    //  episode title + link button
+    var episode_title_link_container = document.createElement("div");
+    episode_title_link_container.classList.add("anime-episode-title-link-container");
+    container.appendChild(episode_title_link_container);
+    var episode_title = document.createElement("p");
+    episode_title.classList.add("anime-episode-title");
+    episode_title.innerText = data.EpisodeName;
+    episode_title_link_container.appendChild(episode_title);
+
+    var episode_link = document.createElement("a");
+    episode_link.classList.add("anime-episode-link");
+    episode_link.classList.add("button-link");
+    episode_link.innerText = "Regarder l'épisode" + " " + data.EpisodeNumber;
+    var arrow = document.createElement("span");
+    arrow.innerText = "→";
+    episode_link.appendChild(arrow);
+    episode_link.href = data.EpisodeLink;
+    episode_title_link_container.appendChild(episode_link);
+
+    // add event listener
+    episode_link.addEventListener("click", function() {
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            chrome.tabs.update(tabs[0].id, {url: episode_link.href});
+        });
     });
+
+    episodeCount++;
 }
+
+
+
+
+// function handle_getFromLocalStorage2() {
+//     var getFromLocalStorageButton = document.getElementById('getFromStorage');
+//     getFromLocalStorageButton.addEventListener('click', function () {
+//         let data = localStorage.getItem("cache");
+//         let dataJSON = JSON.parse(data);
+//         // console.log(dataJSON);
+//         let AllAnimes = dataJSON["Pano"];
+//         console.log(AllAnimes);
+//         for (let anime in AllAnimes) {
+//             console.log(anime);
+//         }
+//         // console.log(AllAnimes);
+//     });
+// }
 
 
 
@@ -192,44 +188,6 @@ function handle_getFromLocalStorage2() {
 //     window.location.href = url;
 // }
 
-// Extensions modify informations # Only on extension popup.html
-
-function modifyAnimeTitle(name) {
-    document.getElementById("anime-name").innerText = name;
-}
-
-function modifyEpisodeTitle(title) {
-    document.getElementById("anime-episode-title").innerText = title;
-}
-
-function modifyEpisodeNumber(number) {
-    document.getElementById("anime-episode-number").innerText = number;
-}
-
-function modifyEpisodeLink(link, number) {
-    let episodeLinkButton = document.getElementById("anime-episode-link")
-    if (number >= 10 && number < 100) {
-        episodeLinkButton.classList.add("button-link-smaller");
-    } else if (number >= 100){
-        episodeLinkButton.classList.add("button-link-smaller-smaller");
-    } 
-    else {
-        episodeLinkButton.classList.remove("button-link-smaller");
-        episodeLinkButton.classList.remove("button-link-smaller-smaller");
-        
-    }
-    episodeLinkButton.href = link;
-    episodeLinkButton.disabled = false;
-}
-
-function modifyDateAjout(dateAjout) {
-    document.getElementById("anime-date-ajout").innerText = dateAjout;
-}
-
-
-function modifyLienImage(lienImage) {
-    document.getElementById("anime-thumbnail").src = lienImage;
-}
 
 function copyright() {
     let year = new Date().getFullYear();
@@ -252,11 +210,6 @@ function activerBoutonAjouter() {
 // Scripts
 
 function getAnimeInfos() {
-    isWatching(function (result) {
-        if (result) {
-            hideEpInfos();
-        }
-    });
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         chrome.scripting.executeScript({
             target: {tabId: tabs[0].id},
@@ -268,23 +221,25 @@ function getAnimeInfos() {
             // const MONTH = new Date().getMonth(); // Get the current month
             // const DAY = new Date().getDay(); // Get the current day
 
-            let episode = new Episode(nom = results.AnimeTitle,
-                lien = results.EpisodeLink,
-                lienImage = results.LienImage,
-                number = results.EpisodeNumber,
-                episodeName = results.EpisodeName,
-                episodeFullName = results.EpisodeFullName,
-                // dateAjout       =  DAY + "/" + MONTH + "/" + YEAR
-            );
+            // let episode = new Episode(nom = results.AnimeTitle,
+            //     lien = results.EpisodeLink,
+            //     lienImage = results.LienImage,
+            //     number = results.EpisodeNumber,
+            //     episodeName = results.EpisodeName,
+            //     episodeFullName = results.EpisodeFullName,
+            //     // dateAjout       =  DAY + "/" + MONTH + "/" + YEAR
+            // );
 
-            modifyAnimeTitle(episode.getNom()); // Name of the anime
-            modifyLienImage(episode.getLienImage()); // Thumbnail of the episode
-            modifyEpisodeTitle(episode.getEpisodeName()); // Name of the episode
-            modifyEpisodeNumber(episode.getEpisode()); // Number of the episode
-            modifyEpisodeLink(episode.getLien(), episode.getEpisode()); // Link of the episode
-            // modifyDateAjout(episode.getDateAjout()); // Date d'ajout de l'épisode
-            allEpisodes.push(episode);
-            //document.getElementById("name").innerText = result[0].result;
+            let episode = {
+                "AnimeTitle": results.AnimeTitle,
+                "EpisodeName": results.EpisodeName,
+                "EpisodeThumbnail": results.LienImage,
+                "EpisodeLink": results.EpisodeLink,
+                "EpisodeNumber": parseInt(results.EpisodeNumber),
+                "LastUpdate": new Date().toLocaleString()
+            }
+
+            createEpisode(episode);
         });
     });
 }
@@ -367,6 +322,25 @@ function getLocalStorage() {
     }
 }
 
+function checkExistEpisode() {
+   // Retrieve existing cache from localStorage or create an empty object
+   var cache = JSON.parse(localStorage.getItem("cache")) || {};
+   // Retrieve user data from the cache or create an empty object
+   var userData = cache[username] || {};
+   // Retrieve anime data from the cache or create an empty object
+   var animeData = userData["anime"] || [];
+
+   // Check if the episode already exists for this anime
+   var existingEpisode = animeData.find(function (episode) {
+   return episode.AnimeTitle === animeTitle && episode.EpisodeName === episodeName;
+   });
+
+   if (existingEpisode) {
+   console.log("The episode already exists for this anime.");
+   return;
+   }
+}
+
 
 function setLocalStorage(data) {
     var animeTitle = data.AnimeTitle;
@@ -380,6 +354,7 @@ function setLocalStorage(data) {
     var cache = JSON.parse(localStorage.getItem("cache")) || {};
     // Retrieve user data from the cache or create an empty object
     var userData = cache[username] || {};
+
     // Retrieve anime data from the cache or create an empty object
     var animeData = userData["anime"] || [];
 
@@ -389,8 +364,8 @@ function setLocalStorage(data) {
     });
 
     if (existingEpisode) {
-    console.log("The episode already exists for this anime.");
-    return;
+        console.log("The episode already exists for this anime.");
+        return;
     }
 
     // Create a new episode object
