@@ -6,11 +6,11 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
         if (tabs[0].url.includes("crunchyroll.com")) {
             handle_addEpisode();
-            handle_getFromLocalStorage();
             desactiverBoutonAjouter();
         } else {
             handle_redirectButton();
         }
+        getFromLocalStorage();
         copyright();
     });
     isWatching(function (result) {
@@ -72,7 +72,7 @@ function handle_openEpisode() {
 }
 
 
-function handle_getFromLocalStorage() {
+function getFromLocalStorage() {
     var cache = JSON.parse(localStorage.getItem("cache")) || {};
 
     // Iterate through the cache object
