@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tabs[0].url.includes("crunchyroll.com")) {
             handle_addEpisode();
             desactiverBoutonAjouter();
+
         } else {
             handle_redirectButton();
         }
         getFromLocalStorage();
         copyright();
+        handle_deleteEpisode();
     });
     isWatching(function (result) {
         if (result) {
@@ -34,8 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Buttons
-
-
 function showButton_byID(id) {
     document.getElementById(id).style.display = "block";
 }
@@ -71,6 +71,16 @@ function handle_openEpisode() {
     });
 }
 
+function handle_deleteEpisode() {
+var deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons.forEach(function(deleteButton) {
+        deleteButton.addEventListener('click', function () {
+            deleteEpisode();
+        });
+    });
+}
+
+
 
 function getFromLocalStorage() {
     var cache = JSON.parse(localStorage.getItem("cache")) || {};
@@ -103,21 +113,30 @@ function getFromLocalStorage() {
 
 function createEpisode(data) {
 
-
     let episodesDIV = document.getElementById("episodes");
     let episode_section = document.createElement("section");
     episode_section.id = episodeCount;
     episodesDIV.appendChild(episode_section);
 
+    // Container Header episode
+    let episode_header = document.createElement("span");
+    episode_header.classList.add("episode-header");
+    episode_section.appendChild(episode_header);
 
     // Anime Title
     let anime_title = document.createElement("p"); // HTML element
-    anime_title.classList.add("anime-name"); // Add class to the element   
+    anime_title.classList.add("anime-name"); // Add class to the element
     anime_title.innerText = data.AnimeTitle; // Text inside the element
 
-    let episode = document.getElementById(episodeCount); 
-    episode.appendChild(anime_title);
-    
+    let episode = document.getElementById(episodeCount);
+    episode_header.appendChild(anime_title);
+
+    // Delete button
+    let delete_button = document.createElement("a");
+    delete_button.classList.add("delete-button");
+    delete_button.innerText = "x";
+    episode_header.appendChild(delete_button);
+
     // Container
     let container = document.createElement("div")
     container.classList.add("anime-title-date-container");
@@ -164,34 +183,27 @@ function createEpisode(data) {
     episodeCount++;
 }
 
+function deleteEpisode(){
+    var episodeId = event.target.parentNode.parentNode.id;
+    try {
+        var episodeData = getLocalStorage()[username]["anime"][episodeId];
+        console.log(episodeData);
+        var cache = JSON.parse(localStorage.getItem("cache"));
+        var userData = cache[username];
+        var animeData = userData["anime"];
+        animeData.splice(episodeId, 1);
+        userData["anime"] = animeData;
+        cache[username] = userData;
+        localStorage.setItem("cache", JSON.stringify(cache));
+    }
+    catch (e) {
+        console.log(e);
+    }
 
-
-
-// function handle_getFromLocalStorage2() {
-//     var getFromLocalStorageButton = document.getElementById('getFromStorage');
-//     getFromLocalStorageButton.addEventListener('click', function () {
-//         let data = localStorage.getItem("cache");
-//         let dataJSON = JSON.parse(data);
-//         // console.log(dataJSON);
-//         let AllAnimes = dataJSON["Pano"];
-//         console.log(AllAnimes);
-//         for (let anime in AllAnimes) {
-//             console.log(anime);
-//         }
-//         // console.log(AllAnimes);
-//     });
-// }
-
-
-
-// function goToURL(url) {
-//     window.location.href = url;
-// }
-
+}
 
 function copyright() {
-    let year = new Date().getFullYear();
-    document.getElementById("year").innerText = year;
+    document.getElementById("year").innerText = new Date().getFullYear();
 }
 
 function desactiverBoutonAjouter() {
@@ -217,19 +229,6 @@ function getAnimeInfos() {
         }, (result) => {
             setLocalStorage(result[0].result);
             let results = result[0].result;
-            // const YEAR = new Date().getFullYear(); // Get the current year
-            // const MONTH = new Date().getMonth(); // Get the current month
-            // const DAY = new Date().getDay(); // Get the current day
-
-            // let episode = new Episode(nom = results.AnimeTitle,
-            //     lien = results.EpisodeLink,
-            //     lienImage = results.LienImage,
-            //     number = results.EpisodeNumber,
-            //     episodeName = results.EpisodeName,
-            //     episodeFullName = results.EpisodeFullName,
-            //     // dateAjout       =  DAY + "/" + MONTH + "/" + YEAR
-            // );
-
             let episode = {
                 "AnimeTitle": results.AnimeTitle,
                 "EpisodeName": results.EpisodeName,
@@ -243,6 +242,7 @@ function getAnimeInfos() {
         });
     });
 }
+
 
 function isWatching(callback) {
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -274,8 +274,6 @@ function getAllInfos() {
     let nextEpisode = document.getElementsByClassName('prev-next-episodes');
     let currentEpisode = document.getElementsByClassName('show-title-link');
     
-    // console.log(nextEpisode);
-    // console.log(currentEpisode);
     // Anime Link
     let nextEpisodeLink = nextEpisode[0].firstChild.firstChild.href
 
@@ -314,7 +312,6 @@ function getAllInfos() {
 function getLocalStorage() {
     try {
         var cache = JSON.parse(localStorage.getItem("cache"));
-        console.log(cache);
         return cache || null;
     } catch (e) {
         console.log(e);
@@ -337,7 +334,6 @@ function checkExistEpisode() {
 
    if (existingEpisode) {
    console.log("The episode already exists for this anime.");
-   return;
    }
 }
 
@@ -390,50 +386,9 @@ function setLocalStorage(data) {
     localStorage.setItem("cache", JSON.stringify(cache));
 }
 
-function setLocalStorage2(data) {
-    var animeTitle = data.AnimeTitle;
-    var episodeFullName = data.EpisodeFullName;
-    var episodeLink = data.EpisodeLink;
-    var episodeName = data.EpisodeName;
-    var episodeNumber = data.EpisodeNumber;
-    var lienImage = data.LienImage;
 
 
-    // Récupérer le cache existant depuis le localStorage et si il n'existe pas, créer un objet vide
-    var cache = JSON.parse(localStorage.getItem("cache")) || {};
-    // Récupérer les données de l'utilisateur depuis le cache et si il n'existe pas, créer un objet vide
-    var userData = cache[username] || {};
-    // Récupérer les données de l'anime depuis le cache et si il n'existe pas, créer un objet vide
-    var animeData = userData[animeTitle] || {};
-
-    // Vérifier si l'épisode existe déjà pour cet anime
-    if (episodeFullName in animeData) {
-        console.log("L'épisode existe déjà pour cet anime.");
-        return;
-    }
-
-    // Ajouter les données de l'épisode dans l'objet animeData
-    animeData[episodeFullName] = {
-        "AnimeTitle" : animeTitle,
-        "EpisodeName" : episodeName,
-        "EpisodeThumbnail" : lienImage,
-        "EpisodeLink": episodeLink,
-        "EpisodeNumber": parseInt(episodeNumber),
-        "LastUpdate": new Date().toLocaleString()
-    };
-
-
-
-    // Ajouter les données de l'anime dans l'objet userData
-    userData[animeTitle] = animeData;
-    // Ajouter les données de l'utilisateur dans le cache
-    cache[username] = userData;
-
-    // Enregistrer le cache dans le localStorage
-    localStorage.setItem("cache", JSON.stringify(cache));
-
-    console.log("Données enregistrées avec succès");
-}
+// --- API ---
 
 function getOnlineStorage(username) {
     fetch(`http://127.0.0.1:5000/get/${username}`)
@@ -512,14 +467,5 @@ function synchronize(username) {
         })
         .catch(error => console.log(error)); // Afficher l'erreur dans la console
 }
-
-
-// Bouton d'ID "addTest" pour tester la fonction
-// var button = document.getElementById("addTest");
-// button.addEventListener("click", function() {
-//     // synchronize('Pablo');
-//     getOnlineStorage('Lucas');
-// });
-
 
 
