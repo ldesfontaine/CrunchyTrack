@@ -195,6 +195,9 @@ function deleteEpisode(){
         userData["anime"] = animeData;
         cache[username] = userData;
         localStorage.setItem("cache", JSON.stringify(cache));
+        var episode = document.getElementById(episodeId);
+        episode.remove();
+
     }
     catch (e) {
         console.log(e);
