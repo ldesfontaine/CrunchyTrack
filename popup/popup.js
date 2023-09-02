@@ -187,7 +187,6 @@ function deleteEpisode(){
     var episodeId = event.target.parentNode.parentNode.id;
     try {
         var episodeData = getLocalStorage()[username]["anime"][episodeId];
-        console.log(episodeData);
         var cache = JSON.parse(localStorage.getItem("cache"));
         var userData = cache[username];
         var animeData = userData["anime"];
