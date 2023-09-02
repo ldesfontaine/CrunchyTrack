@@ -224,6 +224,23 @@ footer {
     transition: 0.2s linear 0s;
 }
 
+.episode-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.delete-button{
+    margin: 5px;
+    padding: 5px;
+    color: orange;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.2s linear 0s;
+}
 
 /* SCROLLBAR  */
 
